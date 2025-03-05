@@ -16,8 +16,9 @@
 # HSE-BOT Dashboard
 
 ## Запуск дашборда
+Перейдите в папку preprocess_calculate и установите все зависимости. Затем в командной строке запустите
 ```bash
-streamlit run streamlit_app.py
+Python main.py
 ```
 
 ## Принцип работы проекта
