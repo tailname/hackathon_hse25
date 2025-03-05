@@ -1,4 +1,5 @@
 from typing import List
+import json
 
 import evaluate
 import numpy as np
@@ -165,25 +166,52 @@ class ValidatorSimple:
             ]
         return scores
 
+    # def validate_rag(
+    #     self,
+    #     test_set: pd.DataFrame,
+    # ):
+    #     """
+    #     param test_set: пандас датасет с нужными полями: answer, ground_truth, context, question
+    #     """
+
+    #     res = {}
+    #     for _, row in tqdm(test_set.iterrows(), "score_sample"):
+    #         gt = row.ground_truth
+    #         answer = row.answer
+    #         context = row.contexts
+    #         scores = self.score_sample(answer, gt, context)
+    #         if not res:
+    #             res = scores
+    #         else:
+    #             for k, v in scores.items():
+    #                 res[k].extend(v)
+    #     for k, v in res.items():
+    #         res[k] = np.mean(res[k])
+    #     return res
+    
     def validate_rag(
         self,
         test_set: pd.DataFrame,
+        output_file: str = "real_time_results.txt"
     ):
-        """
-        param test_set: пандас датасет с нужными полями: answer, ground_truth, context, question
-        """
-
         res = {}
-        for _, row in tqdm(test_set.iterrows(), "score_sample"):
-            gt = row.ground_truth
-            answer = row.answer
-            context = row.contexts
-            scores = self.score_sample(answer, gt, context)
-            if not res:
-                res = scores
-            else:
-                for k, v in scores.items():
-                    res[k].extend(v)
+        with open(output_file, "w", encoding="utf-8") as f:
+            for _, row in tqdm(test_set.iterrows(), "score_sample"):
+                gt = row.ground_truth
+                answer = row.answer
+                context = row.contexts
+                scores = self.score_sample(answer, gt, context)
+
+                # Write current sample's scores as a JSON line
+                f.write(json.dumps(scores) + "\n")
+                f.flush()
+
+                if not res:
+                    res = scores
+                else:
+                    for k, v in scores.items():
+                        res[k].extend(v)
         for k, v in res.items():
             res[k] = np.mean(res[k])
+    
         return res
