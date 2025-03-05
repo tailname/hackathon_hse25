@@ -108,6 +108,17 @@ if page == "Общий обзор":
             gauge_chart(df['bertscore'].mean(), "BERTScore")
     else:
         st.warning("No data available!")
+    # Используем одну колонку для размещения графика по центру
+    col1, col2, col3 = st.columns([1, 6, 1])  # Вторая колонка будет в 6 раз шире остальных
+
+    with col2:
+        st.write("ROUGE & BLEU & BERTScore зависимости")
+        chart_data = pd.DataFrame({
+            "ROUGE": df["rouge"],
+            "BLEU": df["bleu"],
+            "BERTScore": df["bertscore"]
+        })
+        st.line_chart(chart_data)
 
 
 # Дашборды по метрикам
